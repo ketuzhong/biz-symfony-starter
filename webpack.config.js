@@ -36,9 +36,4 @@ const options = {
   ]
 }
 
-import webpackDev from 'es-webpack-engine';
-import webpackBuild from 'es-webpack-engine/dist/build';
-
-let config = (process.env.NODE_ENV === 'development') ? webpackDev(options) : webpackBuild(options)
-
-export default config;
+export default options;

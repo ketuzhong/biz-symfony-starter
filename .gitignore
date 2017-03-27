@@ -24,6 +24,6 @@ composer.lock
 edusoho-online.sublime-workspace
 
 chunk-manifest.json
-.happypack/
-.chokidar-watch-add.log
 web/static-dist/
+
+app/cache/*
