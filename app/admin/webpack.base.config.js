@@ -1,64 +1,70 @@
 const path = require('path');
 const webpack = require('webpack');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
-    // 入口
-    entry: {
-        main: './src/main',
-        vendors: ['vue', 'vue-router', 'axios', 'vuex', 'echarts']
-    },
-    // 输出
-    output: {
-        path: path.join(__dirname, './dist')
-    },
-    // 加载器
-    module: {
-        loaders: [{
-                test: /\.vue$/,
-                loader: 'vue'
-            },
-            {
-                test: /iview.src.*?js$/,
-                loader: 'babel'
-            },
-            {
-                test: /\.js$/,
-                loader: 'babel',
-                exclude: /node_modules/
-            },
-            {
-                test: /\.css$/,
-                loader: 'style!css!autoprefixer'
-            },
-            {
-                test: /\.less/,
-                loader: 'style!css!less?sourceMap'
-            },
-            {
-                test: /\.(gif|jpg|png|woff|svg|eot|ttf)\??.*$/,
-                loader: 'url-loader?limit=8192'
-            },
-            {
-                test: /\.(html|tpl)$/,
-                loader: 'html-loader'
-            }
-        ]
-    },
-    // 转es5
-    babel: {
-        presets: ['es2015'],
-        plugins: ['transform-runtime']
-    },
-    resolve: {
-        // require时省略的扩展名，如：require('module') 不需要module.js
-        extensions: ['', '.js', '.vue'],
-        // 别名，可以直接使用别名来代表设定的路径以及其他
-        alias: {
-            filter: path.join(__dirname, './src/filters'),
-            components: path.join(__dirname, './src/components')
+  entry: {
+    main: './src/main',
+    vendors: './src/vendors'
+  },
+  output: {
+    path: path.join(__dirname, './dist')
+  },
+  module: {
+    rules: [
+      {
+        test: /\.vue$/,
+        loader: 'vue-loader',
+        options: {
+          loaders: {
+            less: ExtractTextPlugin.extract({
+              use: ['css-loader?minimize', 'autoprefixer-loader', 'less-loader'],
+              fallback: 'vue-style-loader'
+            }),
+            css: ExtractTextPlugin.extract({
+              use: ['css-loader', 'autoprefixer-loader', 'less-loader'],
+              fallback: 'vue-style-loader'
+            })
+          }
         }
-    },
-    plugins: [
-
+      },
+      {
+        test: /iview\/.*?js$/,
+        loader: 'babel-loader'
+      },
+      {
+        test: /\.js$/,
+        loader: 'babel-loader',
+        exclude: /node_modules/
+      },
+      {
+        test: /\.css$/,
+        use: ExtractTextPlugin.extract({
+          use: ['css-loader?minimize', 'autoprefixer-loader'],
+          fallback: 'style-loader'
+        })
+      },
+      {
+        test: /\.less/,
+        use: ExtractTextPlugin.extract({
+          use: ['autoprefixer-loader', 'less-loader'],
+          fallback: 'style-loader'
+        })
+      },
+      {
+        test: /\.(gif|jpg|png|woff|svg|eot|ttf)\??.*$/,
+        loader: 'url-loader?limit=1024'
+      },
+      {
+        test: /\.(html|tpl)$/,
+        loader: 'html-loader'
+      }
     ]
+  },
+  resolve: {
+    extensions: ['.js', '.vue'],
+    alias: {
+      'vue': 'vue/dist/vue.esm.js'
+    }
+  }
 };
